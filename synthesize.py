@@ -57,10 +57,19 @@ def synthesize():
 
         # Generate wav files
         if not os.path.exists(hp.sampledir): os.makedirs(hp.sampledir)
+        
+        wavs = np.array([])
+        i = 0
         for i, mag in enumerate(Z):
             print("Working on file", i+1)
             wav = spectrogram2wav(mag)
-            write(hp.sampledir + "/{}.wav".format(i+1), hp.sr, wav)
+            if (i > 0):
+                wavs = np.concatenate([wavs, wav])
+            else:
+                wavs = wav
+            i += 1
+            # write(hp.sampledir + "/{}.wav".format(i+1), hp.sr, wav)
+        write(hp.sampledir + "/{}.wav".format('final'), hp.sr, wavs)
 
 if __name__ == '__main__':
     synthesize()
