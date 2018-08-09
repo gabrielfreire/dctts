@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 # /usr/bin/python2
-'''
-By kyubyong park. kbpark.linguist@gmail.com.
-https://www.github.com/kyubyong/dc_tts
-'''
 
 from __future__ import print_function
 
@@ -45,11 +41,10 @@ def synthesize():
         Y = np.zeros((len(L), hp.max_T, hp.n_mels), np.float32)
         prev_max_attentions = np.zeros((len(L),), np.int32)
         for j in tqdm(range(hp.max_T)):
-            _gs, _Y, _max_attentions, _alignments = \
-                sess.run([g.global_step, g.Y, g.max_attentions, g.alignments],
-                         {g.L: L,
-                          g.mels: Y,
-                          g.prev_max_attentions: prev_max_attentions})
+            _gs, _Y, _max_attentions, _alignments = sess.run([g.global_step, g.Y, g.max_attentions, g.alignments],
+                                                                {g.L: L,
+                                                                g.mels: Y,
+                                                                g.prev_max_attentions: prev_max_attentions})
             Y[:, j, :] = _Y[:, j, :]
             prev_max_attentions = _max_attentions[:, j]
 

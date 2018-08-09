@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 #/usr/bin/python2
-'''
-By kyubyong park. kbpark.linguist@gmail.com. 
-https://www.github.com/kyubyong/dc_tts
-'''
+
 
 from __future__ import print_function
 
@@ -119,14 +116,9 @@ def get_batch():
         mag.set_shape((None, hp.n_fft//2+1))
 
         # Batching
-        _, (texts, mels, mags, fnames) = tf.contrib.training.bucket_by_sequence_length(
-                                            input_length=text_length,
-                                            tensors=[text, mel, mag, fname],
-                                            batch_size=hp.B,
-                                            bucket_boundaries=[i for i in range(minlen + 1, maxlen - 1, 20)],
-                                            num_threads=8,
-                                            capacity=hp.B*4,
-                                            dynamic_pad=True)
+        _, (texts, mels, mags, fnames) = tf.contrib.training.bucket_by_sequence_length(input_length=text_length, tensors=[text, mel, mag, fname],
+                                            batch_size=hp.B, bucket_boundaries=[i for i in range(minlen + 1, maxlen - 1, 20)], num_threads=8,
+                                            capacity=hp.B*4, dynamic_pad=True)
 
     return texts, mels, mags, fnames, num_batch
 

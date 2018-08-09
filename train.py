@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 # /usr/bin/python2
-'''
-By kyubyong park. kbpark.linguist@gmail.com. 
-https://www.github.com/kyubyong/dc_tts
-'''
+
 
 from __future__ import print_function
 
@@ -29,14 +26,14 @@ class Graph:
         self.char2idx, self.idx2char = load_vocab()
 
         # Set flag
-        training = True if mode=="train" else False
+        training = True if (mode == "train") else False
 
         # Graph
         # Data Feeding
         ## L: Text. (B, N), int32
         ## mels: Reduced melspectrogram. (B, T/r, n_mels) float32
         ## mags: Magnitude. (B, T, n_fft//2+1) float32
-        if mode=="train":
+        if (mode=="train"):
             self.L, self.mels, self.mags, self.fnames, self.num_batch = get_batch()
             self.prev_max_attentions = tf.ones(shape=(hp.B,), dtype=tf.int32)
             self.gts = tf.convert_to_tensor(guided_attention())
@@ -45,7 +42,7 @@ class Graph:
             self.mels = tf.placeholder(tf.float32, shape=(None, None, hp.n_mels))
             self.prev_max_attentions = tf.placeholder(tf.int32, shape=(None,))
 
-        if num==1 or (not training):
+        if (num==1 or (not training)):
             with tf.variable_scope("Text2Mel"):
                 # Get S or decoder inputs. (B, T//r, n_mels)
                 self.S = tf.concat((tf.zeros_like(self.mels[:, :1, :]), self.mels[:, :-1, :]), 1)
@@ -71,7 +68,7 @@ class Graph:
             with tf.variable_scope("SSRN"):
                 self.Z_logits, self.Z = SSRN(self.mels, training=training)
 
-        if not training:
+        if (not training):
             # During inference, the predicted melspectrogram values are fed.
             with tf.variable_scope("SSRN"):
                 self.Z_logits, self.Z = SSRN(self.Y, training=training)
@@ -79,8 +76,8 @@ class Graph:
         with tf.variable_scope("gs"):
             self.global_step = tf.Variable(0, name='global_step', trainable=False)
 
-        if training:
-            if num==1: # Text2Mel
+        if (training):
+            if (num==1): # Text2Mel
                 # mel L1 loss
                 self.loss_mels = tf.reduce_mean(tf.abs(self.Y - self.mels))
 
@@ -143,20 +140,20 @@ if __name__ == '__main__':
     logdir = hp.logdir + "-" + str(num)
     sv = tf.train.Supervisor(logdir=logdir, save_model_secs=0, global_step=g.global_step)
     with sv.managed_session() as sess:
-        while 1:
+        while (1):
             for _ in tqdm(range(g.num_batch), total=g.num_batch, ncols=70, leave=False, unit='b'):
                 gs, _ = sess.run([g.global_step, g.train_op])
 
                 # Write checkpoint files at every 1k steps
-                if gs % 1000 == 0:
+                if (gs % 1000 == 0):
                     sv.saver.save(sess, logdir + '/model_gs_{}'.format(str(gs // 1000).zfill(3) + "k"))
 
-                    if num==1:
+                    if (num==1):
                         # plot alignment
                         alignments = sess.run(g.alignments)
                         plot_alignment(alignments[0], str(gs // 1000).zfill(3) + "k", logdir)
 
                 # break
-                if gs > hp.num_iterations: break
+                if (gs > hp.num_iterations): break
 
     print("Done")

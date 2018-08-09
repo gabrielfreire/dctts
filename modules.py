@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 #/usr/bin/python2
-'''
-By kyubyong park. kbpark.linguist@gmail.com. 
-https://www.github.com/kyubyong/dc_tts
-'''
 
 from __future__ import print_function, division
 
@@ -29,10 +25,8 @@ def embed(inputs, vocab_size, num_units, zero_pad=True, scope="embedding", reuse
         should be `num_units`.
     '''
     with tf.variable_scope(scope, reuse=reuse):
-        lookup_table = tf.get_variable('lookup_table', 
-                                       dtype=tf.float32, 
-                                       shape=[vocab_size, num_units],
-                                       initializer=tf.truncated_normal_initializer(mean=0.0, stddev=0.1))
+        lookup_table = tf.get_variable('lookup_table', dtype=tf.float32, shape=[vocab_size, num_units], 
+                                        initializer=tf.truncated_normal_initializer(mean=0.0, stddev=0.1))
         if zero_pad:
             lookup_table = tf.concat((tf.zeros(shape=[1, num_units]), 
                                       lookup_table[1:, :]), 0)
@@ -42,9 +36,7 @@ def embed(inputs, vocab_size, num_units, zero_pad=True, scope="embedding", reuse
     return outputs
 
 
-def normalize(inputs,
-              scope="normalize",
-              reuse=None):
+def normalize(inputs, scope="normalize", reuse=None):
     '''Applies layer normalization that normalizes along the last axis.
 
     Args:
@@ -57,10 +49,7 @@ def normalize(inputs,
     Returns:
       A tensor with the same shape and data dtype as `inputs`.
     '''
-    outputs = tf.contrib.layers.layer_norm(inputs,
-                                           begin_norm_axis=-1,
-                                           scope=scope,
-                                           reuse=reuse)
+    outputs = tf.contrib.layers.layer_norm(inputs, begin_norm_axis=-1, scope=scope, reuse=reuse)
     return outputs
 
 
@@ -88,17 +77,8 @@ def highwaynet(inputs, num_units=None, scope="highwaynet", reuse=None):
         outputs = H * T + inputs * (1. - T)
     return outputs
 
-def conv1d(inputs,
-           filters=None,
-           size=1,
-           rate=1,
-           padding="SAME",
-           dropout_rate=0,
-           use_bias=True,
-           activation_fn=None,
-           training=True,
-           scope="conv1d",
-           reuse=None):
+def conv1d(inputs, filters=None, size=1, rate=1, padding="SAME", dropout_rate=0, use_bias=True,
+           activation_fn=None, training=True, scope="conv1d", reuse=None):
     '''
     Args:
       inputs: A 3-D tensor with shape of [batch, time, depth].
@@ -140,17 +120,8 @@ def conv1d(inputs,
 
     return tensor
 
-def hc(inputs,
-       filters=None,
-       size=1,
-       rate=1,
-       padding="SAME",
-       dropout_rate=0,
-       use_bias=True,
-       activation_fn=None,
-       training=True,
-       scope="hc",
-       reuse=None):
+def hc(inputs, filters=None, size=1, rate=1, padding="SAME", dropout_rate=0, use_bias=True,
+       activation_fn=None, training=True, scope="hc", reuse=None):
     '''
     Args:
       inputs: A 3-D tensor with shape of [batch, time, depth].
@@ -196,18 +167,9 @@ def hc(inputs,
 
     return tensor
 
-def conv1d_transpose(inputs,
-                     filters=None,
-                     size=3,
-                     stride=2,
-                     padding='same',
-                     dropout_rate=0,
-                     use_bias=True,
-                     activation=None,
-                     training=True,
-                     scope="conv1d_transpose",
-                     reuse=None):
-    '''
+def conv1d_transpose(inputs, filters=None, size=3, stride=2, padding='same', dropout_rate=0, use_bias=True, activation=None,
+                     training=True, scope="conv1d_transpose", reuse=None):
+    '''deconvolution
         Args:
           inputs: A 3-D tensor with shape of [batch, time, depth].
           filters: An int. Number of outputs (=activation maps)
@@ -229,14 +191,8 @@ def conv1d_transpose(inputs,
         if filters is None:
             filters = inputs.get_shape().as_list()[-1]
         inputs = tf.expand_dims(inputs, 1)
-        tensor = tf.layers.conv2d_transpose(inputs,
-                                   filters=filters,
-                                   kernel_size=(1, size),
-                                   strides=(1, stride),
-                                   padding=padding,
-                                   activation=None,
-                                   kernel_initializer=tf.contrib.layers.variance_scaling_initializer(),
-                                   use_bias=use_bias)
+        tensor = tf.layers.conv2d_transpose(inputs, filters=filters, kernel_size=(1, size), strides=(1, stride), padding=padding,
+                                   activation=None, kernel_initializer=tf.contrib.layers.variance_scaling_initializer(), use_bias=use_bias)
         tensor = tf.squeeze(tensor, 1)
         tensor = normalize(tensor)
         if activation is not None:
