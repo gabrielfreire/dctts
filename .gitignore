@@ -1,3 +1,4 @@
 logdir/
 my_sentences.txt
 samples/
+__pycache__/
