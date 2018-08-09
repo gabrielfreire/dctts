@@ -13,7 +13,8 @@ Implementation of the DCTTS introduced in [Efficiently Trainable Text-to-Speech 
 
 ## Data
 
-I train English models on the LJ Speech dataset <p> 1. [LJ Speech Dataset](https://keithito.com/LJ-Speech-Dataset/) </o>
+I train English models on the LJ Speech dataset 
+* [LJ Speech Dataset](https://keithito.com/LJ-Speech-Dataset/)
 
 LJ Speech Dataset is recently widely used as a benchmark dataset in the TTS task because it is publicly available, and it has 24 hours of reasonable quality samples.
 Nick's and Kate's audiobooks are additionally used to see if the model can learn even with less data, variable speech samples. They are 18 hours and 5 hours long, respectively. Finally, KSS Dataset is a Korean single speaker speech dataset that lasts more than 12 hours.
