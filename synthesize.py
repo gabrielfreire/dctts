@@ -13,7 +13,12 @@ from utils import *
 from data_load import load_data
 from scipy.io.wavfile import write
 from tqdm import tqdm
-
+def print_L():
+    # Load data
+    L = load_data("synthesize")
+    print(L)
+    print(L.shape)
+    
 def synthesize():
     # Load data
     L = load_data("synthesize")
@@ -30,8 +35,7 @@ def synthesize():
         saver1.restore(sess, tf.train.latest_checkpoint(hp.logdir + "-1"))
         print("Text2Mel Restored!")
 
-        var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'SSRN') + \
-                   tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'gs')
+        var_list = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, 'SSRN') + tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'gs')
         saver2 = tf.train.Saver(var_list=var_list)
         saver2.restore(sess, tf.train.latest_checkpoint(hp.logdir + "-2"))
         print("SSRN Restored!")
@@ -47,7 +51,7 @@ def synthesize():
                                                                 g.prev_max_attentions: prev_max_attentions})
             Y[:, j, :] = _Y[:, j, :]
             prev_max_attentions = _max_attentions[:, j]
-
+            
         # Get magnitude
         Z = sess.run(g.Z, {g.Y: Y})
 
@@ -60,6 +64,7 @@ def synthesize():
 
 if __name__ == '__main__':
     synthesize()
+    # print_L()
     print("Done")
 
 
